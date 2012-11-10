@@ -58,8 +58,11 @@ class IssueController extends Controller
 	 */
 	public function actionView($id)
 	{
+		$issue=$this->loadModel($id);
+		$comment=$this->createComment($issue);
 		$this->render('view',array(
-			'model'=>$this->loadModel($id),
+			'model'=>$issue,
+			'comment'=>$comment,
 		));
 	}
 
@@ -170,11 +173,20 @@ class IssueController extends Controller
 	 * If the data model is not found, an HTTP exception will be raised.
 	 * @param integer the ID of the model to be loaded
 	 */
-	public function loadModel($id)
+	public function loadModel($id,$withComments=false)
 	{
-		$model=Issue::model()->findByPk($id);
+		if($withComments)
+		{
+			$model=Issue::model()->with(array('comments'=>array('with'=>'author')))->findbyPk($id);
+		}
+		else
+		{
+			$model=Issue::model()->findByPk($id);
+		}
+
 		if($model===null)
 			throw new CHttpException(404,'The requested page does not exist.');
+
 		return $model;
 	}
 
@@ -231,4 +243,20 @@ class IssueController extends Controller
 	{
 		return $this->_project;
 	}
+
+	protected function createComment($issue)
+	{
+		$comment=new Comment;
+		if(isset($_POST['Comment']))
+		{
+			$comment->attributes=$_POST['Comment'];
+			if($issue->addComment($comment))
+			{
+				Yii::app()->user->setFlash('commentSubmitted',"Your comment has	been added." );
+				$this->refresh();
+			}
+		}
+		return $comment;
+	}
+
 }

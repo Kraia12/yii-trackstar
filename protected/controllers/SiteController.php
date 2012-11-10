@@ -2,6 +2,7 @@
 
 class SiteController extends Controller
 {
+	public $defaultAction = 'login';
 	/**
 	 * Declares class-based actions.
 	 */
@@ -29,7 +30,7 @@ class SiteController extends Controller
 	{
 		// renders the view file 'protected/views/site/index.php'
 		// using the default layout 'protected/views/layouts/main.php'
-		$this->render('index');
+		$this->actionLogin();
 	}
 
 	/**
@@ -77,6 +78,11 @@ class SiteController extends Controller
 	 */
 	public function actionLogin()
 	{
+		Yii::trace("The actionLogin() method is being requested","application.controllers.SiteController");
+		if(!Yii::app()->user->isGuest)
+		{
+			$this->redirect(Yii::app()->homeUrl);
+		}
 		$model=new LoginForm;
 
 		// if it is ajax validation request
@@ -92,7 +98,14 @@ class SiteController extends Controller
 			$model->attributes=$_POST['LoginForm'];
 			// validate user input and redirect to the previous page if valid
 			if($model->validate() && $model->login())
+			{
+				Yii::log("Successful login of user: " . Yii::app()->user->id, "info", "application.controllers.SiteController");
 				$this->redirect(Yii::app()->user->returnUrl);
+			}
+			else
+			{
+				Yii::log("Failed login attempt", "warning", "application.controllers.SiteController");
+			}
 		}
 		// display the login form
 		$this->render('login',array('model'=>$model));
@@ -105,5 +118,11 @@ class SiteController extends Controller
 	{
 		Yii::app()->user->logout();
 		$this->redirect(Yii::app()->homeUrl);
+	}
+
+	public function actionShowLog()
+	{
+		echo "Logged Messages:<br><br>";
+		var_dump(Yii::getLogger()->getLogs());
 	}
 }

@@ -21,7 +21,15 @@ return array(
 		'description' => 'This is test project 3',
 		'create_time' => '',
 		'create_user_id' => '',
-		'update_time' => '',		
+		'update_time' => '',
 		'update_user_id' => '',
 	),
+	'project4'=>array(
+		'name' => 'Test Project 4',
+		'description' => 'This is test project 4',
+		'create_time' => '',
+		'create_user_id' => '',
+		'update_time' => '',
+		'update_user_id' => '',
+		),
 );

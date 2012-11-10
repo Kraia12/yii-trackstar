@@ -7,8 +7,9 @@
 // CWebApplication properties can be configured here.
 return array(
 	'basePath'=>dirname(__FILE__).DIRECTORY_SEPARATOR.'..',
-	'name'=>'My Web Application',
-
+	'name'=>'Trackstar',
+	'homeUrl'=>'project',
+	'theme'=>'new',
 	// preloading 'log' component
 	'preload'=>array('log'),
 
@@ -16,6 +17,7 @@ return array(
 	'import'=>array(
 		'application.models.*',
 		'application.components.*',
+		'application.modules.admin.models.*',
 	),
 
 	'modules'=>array(
@@ -27,6 +29,7 @@ return array(
 			// If removed, Gii defaults to localhost only. Edit carefully to taste.
 			'ipFilters'=>array('127.0.0.1','::1'),
 		),
+		'admin',
 
 	),
 
@@ -37,16 +40,28 @@ return array(
 			'allowAutoLogin'=>true,
 		),
 		// uncomment the following to enable URLs in path-format
-		/*
+
 		'urlManager'=>array(
 			'urlFormat'=>'path',
 			'rules'=>array(
-				'<controller:\w+>/<id:\d+>'=>'<controller>/view',
-				'<controller:\w+>/<action:\w+>/<id:\d+>'=>'<controller>/<action>',
-				'<controller:\w+>/<action:\w+>'=>'<controller>/<action>',
+				'about' => array('site/page','defaultParams' => array('view' => 'about')),
+               // '/' => 'site/index',
+                'contact' => 'site/contact',
+                'login'=>array('site/login'),
+                'logout'=>array('site/logout'),
+                'registration'=>array('site/registration'),
+                'recovery'=>array('site/recovery'),
+                '<controller:\w+>/<id:\d+>' => '<controller>/view',
+                '<controller:\w+>/<action:\w+>/<id:\d+>' => '<controller>/<action>',
+                '<controller:\w+>/<action:\w+>' => '<controller>/<action>',
+				'<id:\d+>/commentfeed'=>array('comment/feed', 'urlSuffix'=>'.xml', 'caseSensitive'=>false),
+				'commentfeed'=>array('comment/feed','urlSuffix'=>'.xml', 'caseSensitive'=>false),
 			),
+			'showScriptName'=>false,
 		),
-		*/
+		'cache'=>array(
+			'class'=>'system.caching.CFileCache',
+		),
 		// uncomment the following to use a MySQL database
 
 		'db'=>array(
@@ -67,16 +82,20 @@ return array(
 		'log'=>array(
 			'class'=>'CLogRouter',
 			'routes'=>array(
-				array(
-					'class'=>'CFileLogRoute',
-					'levels'=>'error, warning',
-				),
-				// uncomment the following to show log messages on web pages
-				/*
-				array(
-					'class'=>'CWebLogRoute',
-				),
-				*/
+			array(
+				'class'=>'CFileLogRoute',
+				'levels'=>'error',
+			),
+		array(
+			'class'=>'CFileLogRoute',
+			'levels'=>'info, trace',
+			'logFile'=>'infoMessages.log',
+		),
+		array(
+			'class'=>'CWebLogRoute',
+			'levels'=>'warning',
+		),
+
 			),
 		),
 	),

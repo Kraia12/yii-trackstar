@@ -55,14 +55,15 @@ class ProjectController extends Controller
 			'criteria'=>array(
 				'condition'=>'project_id=:projectId',
 				'params'=>array(':projectId'=>$id),
-		),
-			'pagination'=>array(
-			'pageSize'=>1,
-		),
+				),
+					'pagination'=>array(
+					'pageSize'=>1,
+					),
 		));
+		Yii::app()->clientScript->registerLinkTag('alternate','application/rss+xml',$this->createUrl('comment/feed',array('id'=>$id)));
 		$this->render('view',array(
-			'model'=>$this->loadModel($id),
-			'issueDataProvider'=>$issueDataProvider,
+		'model'=>$this->loadModel($id),
+		'issueDataProvider'=>$issueDataProvider,
 		));
 	}
 
@@ -140,8 +141,19 @@ class ProjectController extends Controller
 	public function actionIndex()
 	{
 		$dataProvider=new CActiveDataProvider('Project');
+		Yii::app()->clientScript->registerLinkTag('alternate','application/rss+xml',
+		$this->createUrl('comment/feed'));
+
+		//get the latest system message to display based on the update_time column
+		$sysMessage = SysMessage::getLatest();
+		if($sysMessage != null)
+		$message = $sysMessage->message;
+		else
+		$message = null;
+
 		$this->render('index',array(
-			'dataProvider'=>$dataProvider,
+		'dataProvider'=>$dataProvider,
+		'sysMessage'=>$message,
 		));
 	}
 

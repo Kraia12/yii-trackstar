@@ -30,9 +30,16 @@ class IssueTest extends CDbTestCase
 	{
 		$this->assertTrue('Started' == $this->issues('issueBug')->getStatusText());
 	}
-	
+
 	public function testGetTypeText()
 	{
 		$this->assertTrue('Bug' == $this->issues('issueBug')->getTypeText());
+	}
+
+	public function testAddComment()
+	{
+		$comment = new Comment;
+		$comment->content = "this is a test comment";
+		$this->assertTrue($this->issues('issueBug')->addComment($comment));
 	}
 }
